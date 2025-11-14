@@ -3,7 +3,7 @@ import { NavLink as RouterNavLink, useNavigate } from 'react-router-dom';
 import type { NavLink } from '../types';
 import {
   DashboardIcon, AnalyticsIcon, ChatsIcon, SettingsIcon, IntegrationsIcon,
-  HelpCenterIcon, LogoutIcon, NewBotIcon, LogoIcon
+  HelpCenterIcon, LogoutIcon, NewBotIcon, LogoIcon, ProfileIcon
 } from './icons/Icons';
 
 
@@ -11,6 +11,7 @@ const mainNavLinks: NavLink[] = [
   { path: '/dashboard', name: 'Dashboard', icon: DashboardIcon },
   { path: '/analytics', name: 'Analytics', icon: AnalyticsIcon },
   { path: '/chats', name: 'Chats', icon: ChatsIcon },
+  { path: '/profile', name: 'Profile', icon: ProfileIcon },
   { path: '/settings', name: 'Settings', icon: SettingsIcon },
   { path: '/data-onboarding', name: 'Data Onboarding', icon: IntegrationsIcon },
 ];

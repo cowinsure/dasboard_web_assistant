@@ -5,6 +5,7 @@ import Dashboard from './pages/Dashboard';
 import Chats from './pages/Chats';
 import DataOnboarding from './pages/DataOnboarding';
 import Settings from './pages/Settings';
+import Profile from './pages/Profile';
 import Login from './pages/Login';
 import Register from './pages/Register';
 
@@ -27,6 +28,7 @@ function App() {
         <Route path="/analytics" element={<Dashboard />} />
         <Route path="/chats" element={<Chats />} />
         <Route path="/settings" element={<Settings />} />
+        <Route path="/profile" element={<Profile />} />
         <Route path="/data-onboarding" element={<DataOnboarding />} />
         <Route path="/integrations" element={<Navigate to="/data-onboarding" replace />} />
         <Route path="/documents" element={<Navigate to="/data-onboarding" replace />} />

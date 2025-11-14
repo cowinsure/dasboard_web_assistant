@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { UploadIcon, TrashIcon, SuccessRateIcon, DocumentIcon, EyeIcon } from '../components/icons/Icons';
+import React, { useState, useEffect } from 'react';
+import { UploadIcon, TrashIcon, SuccessRateIcon, DocumentIcon, EyeIcon, DownloadIcon } from '../components/icons/Icons';
 import Toast from '../components/Toast';
 
 // --- Data & Types ---
@@ -12,15 +12,17 @@ type Document = {
   status: 'Processed' | 'Pending' | 'Error';
 };
 
-const documentsData: Document[] = [
-  { id: '1', name: 'Q4_2024_Services_Catalog.pdf', category: 'Service Catalog', size: '2.5 MB', uploadedAt: '2024-07-15', status: 'Processed' },
-  { id: '2', name: 'enterprise_pricing_v3.xlsx', category: 'Pricing Sheets', size: '512 KB', uploadedAt: '2024-07-15', status: 'Processed' },
-  { id: '3', name: 'return_policy.docx', category: 'Company Policies', size: '128 KB', uploadedAt: '2024-07-14', status: 'Processed' },
-  { id: '4', name: 'faq_customer_support.pdf', category: 'FAQs', size: '1.2 MB', uploadedAt: '2024-07-14', status: 'Processed' },
-  { id: '5', name: 'product_manual_model_X.pdf', category: 'Product Manuals', size: '15.8 MB', uploadedAt: '2024-07-12', status: 'Error' },
-  { id: '6', name: 'new_hire_onboarding.docx', category: 'Other', size: '845 KB', uploadedAt: '2024-07-11', status: 'Pending' },
-  { id: '7', name: 'API_integration_guide.pdf', category: 'Product Manuals', size: '4.1 MB', uploadedAt: '2024-07-10', status: 'Processed' },
-];
+// API response type
+type ApiDocument = {
+  document_id: string;
+  filename: string;
+  file_size: number;
+  mime_type: string;
+  status: string;
+  chunks_count: number;
+  uploaded_at: string;
+  updated_at: string;
+};
 
 // --- Helper Functions & Components ---
 
@@ -107,6 +109,9 @@ const DataOnboarding: React.FC = () => {
     const [showToast, setShowToast] = useState(false);
     const [toastMessage, setToastMessage] = useState('');
     const [toastType, setToastType] = useState<'success' | 'error'>('success');
+    const [documents, setDocuments] = useState<Document[]>([]);
+    const [isLoadingDocuments, setIsLoadingDocuments] = useState(true);
+    const [downloadingId, setDownloadingId] = useState<string | null>(null);
 
     const handleOpenDialog = () => setIsDialogOpen(true);
     const handleCloseDialog = () => {
@@ -165,6 +170,80 @@ const DataOnboarding: React.FC = () => {
     };
 
     const canProceedToReview = uploadedFiles.length > 0;
+
+    const fetchDocuments = async () => {
+        try {
+            const token = localStorage.getItem('accessToken');
+            if (!token) {
+                throw new Error('Access token not found');
+            }
+            const response = await fetch('https://api.nswebassistant.site/documents?limit=20&offset=0&status=completed&sort_by=filename&sort_order=asc', {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+            if (!response.ok) {
+                throw new Error('Failed to fetch documents');
+            }
+            const data: { documents: ApiDocument[] } = await response.json();
+            const mappedDocuments: Document[] = data.documents.map(doc => ({
+                id: doc.document_id,
+                name: doc.filename,
+                category: 'Other', // API doesn't provide category
+                size: formatBytes(doc.file_size),
+                uploadedAt: new Date(doc.uploaded_at).toLocaleDateString(),
+                status: doc.status === 'completed' ? 'Processed' : 'Pending' as Document['status']
+            }));
+            setDocuments(mappedDocuments);
+        } catch (error) {
+            console.error('Error fetching documents:', error);
+            setToastMessage('Failed to load documents.');
+            setToastType('error');
+            setShowToast(true);
+        } finally {
+            setIsLoadingDocuments(false);
+        }
+    };
+
+    const handleDownload = async (doc: Document) => {
+        setDownloadingId(doc.id);
+        try {
+            const token = localStorage.getItem('accessToken');
+            if (!token) {
+                throw new Error('Access token not found');
+            }
+            const response = await fetch(`https://api.nswebassistant.site/download/${doc.id}`, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+            if (!response.ok) {
+                throw new Error('Download failed');
+            }
+            const blob = await response.blob();
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = doc.name;
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+            window.URL.revokeObjectURL(url);
+        } catch (error) {
+            console.error('Download failed:', error);
+            setToastMessage('Download failed. Please try again.');
+            setToastType('error');
+            setShowToast(true);
+        } finally {
+            setDownloadingId(null);
+        }
+    };
+
+    useEffect(() => {
+        fetchDocuments();
+    }, []);
 
     const renderStepContent = () => {
         switch (currentStep) {
@@ -265,7 +344,16 @@ const DataOnboarding: React.FC = () => {
                         </tr>
                     </thead>
                     <tbody className="divide-y divide-sentinel-border">
-                        {documentsData.map((doc) => (
+                        {isLoadingDocuments ? (
+                            <tr>
+                                <td colSpan={6} className="px-6 py-4 text-center text-sentinel-text-secondary">Loading documents...</td>
+                            </tr>
+                        ) : documents.length === 0 ? (
+                            <tr>
+                                <td colSpan={6} className="px-6 py-4 text-center text-sentinel-text-secondary">No documents found.</td>
+                            </tr>
+                        ) : (
+                            documents.map((doc) => (
                             <tr key={doc.id} className="hover:bg-sentinel-main/50">
                                 <td className="px-6 py-4 whitespace-nowrap">
                                     <div className="flex items-center gap-3">
@@ -281,12 +369,14 @@ const DataOnboarding: React.FC = () => {
                                 </td>
                                 <td className="px-6 py-4 whitespace-nowrap text-right">
                                     <div className="flex justify-end gap-2">
-                                        <button className="p-2 text-sentinel-text-secondary hover:text-sentinel-primary"><EyeIcon className="w-5 h-5" /></button>
+                                        {/* <button className="p-2 text-sentinel-text-secondary hover:text-sentinel-primary"><EyeIcon className="w-5 h-5" /></button> */}
+                                        <button onClick={() => handleDownload(doc)} disabled={downloadingId === doc.id} className="p-2 text-sentinel-text-secondary hover:text-sentinel-primary disabled:opacity-50"><DownloadIcon className="w-5 h-5" /></button>
                                         <button className="p-2 text-sentinel-text-secondary hover:text-sentinel-red"><TrashIcon className="w-5 h-5" /></button>
                                     </div>
                                 </td>
                             </tr>
-                        ))}
+                        ))
+                        )}
                     </tbody>
                 </table>
             </div>

@@ -83,7 +83,7 @@ const ChatWindow: React.FC<{ selected: string | null, grouped: Record<string, Ch
                 </div>
                 {messages.map((msg, index) => (
                     <div key={index} className={`flex gap-3 ${msg.from === 'user' ? 'justify-end' : 'justify-start'}`}>
-                        {msg.from === 'bot' && <img src={`https://i.pravatar.cc/150?img=${Math.abs(selected.split('').reduce((a, b) => a + b.charCodeAt(0), 0)) % 50 + 1}`} alt="bot" className="w-8 h-8 rounded-full self-end" />}
+                        {msg.from === 'user' && <img src={`https://i.pravatar.cc/150?img=${Math.abs(selected.split('').reduce((a, b) => a + b.charCodeAt(0), 0)) % 50 + 1}`} alt="bot" className="w-8 h-8 rounded-full self-end" />}
                         <div className={`max-w-md p-3 rounded-lg ${msg.from === 'user' ? 'bg-sentinel-primary text-white rounded-br-none' : 'bg-sentinel-card text-sentinel-text-primary rounded-bl-none'}`}>
                             <p className="text-sm">{msg.text}</p>
                             <p className={`text-xs mt-1 ${msg.from === 'user' ? 'text-blue-200' : 'text-sentinel-text-tertiary'} text-right`}>{msg.time}</p>
