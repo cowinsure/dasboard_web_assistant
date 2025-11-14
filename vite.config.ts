@@ -18,6 +18,11 @@ export default defineConfig(({ mode }) => {
         alias: {
           '@': path.resolve(__dirname, '.'),
         }
-      }
+      },
+      preview: {
+    host: true, // allows preview to listen on all interfaces
+    allowedHosts: ["dashboard.nswebassistant.site"], // add your domain here
+    port: 4173,
+  },
     };
 });
