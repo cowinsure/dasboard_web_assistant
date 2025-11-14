@@ -1,0 +1,11 @@
+version: "3.9"
+
+services:
+  webassistant:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: webassistant
+    ports:
+      - "4173:4173"
+    restart: unless-stopped
