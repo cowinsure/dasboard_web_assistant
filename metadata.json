@@ -1,0 +1,5 @@
+{
+  "name": "AI Sentinel Dashboard",
+  "description": "A web application for handling a web assistant and its services, providing analytics, chat management, and data onboarding for the AI.",
+  "requestFramePermissions": []
+}

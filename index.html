@@ -1,0 +1,48 @@
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AI Sentinel Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              'sentinel-body': '#0D1117',
+              'sentinel-main': '#161B22',
+              'sentinel-card': '#1C2128',
+              'sentinel-border': '#30363D',
+              'sentinel-primary': '#2F81F7',
+              'sentinel-primary-hover': '#4C9AFF',
+              'sentinel-text-primary': '#E6EDF3',
+              'sentinel-text-secondary': '#8D96A0',
+              'sentinel-text-tertiary': '#7D8590',
+              'sentinel-green': '#238636',
+              'sentinel-red': '#DA3633',
+              'sentinel-yellow': '#D29922',
+            },
+          },
+        },
+      }
+    </script>
+  <script type="importmap">
+{
+  "imports": {
+    "react-router-dom": "https://aistudiocdn.com/react-router-dom@^7.9.5",
+    "react/": "https://aistudiocdn.com/react@^19.2.0/",
+    "react": "https://aistudiocdn.com/react@^19.2.0",
+    "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.0/"
+  }
+}
+</script>
+<link rel="stylesheet" href="/index.css">
+</head>
+  <body class="bg-sentinel-body text-sentinel-text-primary">
+    <div id="root"></div>
+    <script type="module" src="/index.tsx"></script>
+  </body>
+</html>
