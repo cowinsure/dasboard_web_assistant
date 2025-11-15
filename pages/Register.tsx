@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { LogoIcon, SpinnerIcon } from '../components/icons/Icons';
+import { LogoIcon, SpinnerIcon, EyeIcon, EyeOffIcon } from '../components/icons/Icons';
 import Toast from '../components/Toast';
 
 const Register: React.FC = () => {
     const [tenantName, setTenantName] = useState('Test Tenants');
     const [email, setEmail] = useState('test123@example.com');
     const [password, setPassword] = useState('password123');
+    const [showPassword, setShowPassword] = useState(false);
     const [loading, setLoading] = useState(false);
     const [toast, setToast] = useState<{ message: string; type: 'success' | 'error'; visible: boolean }>({
         message: '',
@@ -103,16 +104,29 @@ const Register: React.FC = () => {
                     </div>
                     <div>
                         <label htmlFor="password" className="text-sm font-medium text-sentinel-text-secondary block mb-2">Password</label>
-                        <input
-                            type="password"
-                            name="password"
-                            id="password"
-                            className="w-full px-3 py-2 bg-sentinel-card border border-sentinel-border rounded-lg focus:outline-none focus:ring-2 focus:ring-sentinel-primary"
-                            placeholder="Create a strong password"
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                            required
-                        />
+                        <div className="relative">
+                            <input
+                                type={showPassword ? 'text' : 'password'}
+                                name="password"
+                                id="password"
+                                className="w-full px-3 py-2 pr-10 bg-sentinel-card border border-sentinel-border rounded-lg focus:outline-none focus:ring-2 focus:ring-sentinel-primary"
+                                placeholder="Create a strong password"
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
+                                required
+                            />
+                            <button
+                                type="button"
+                                className="absolute inset-y-0 right-0 pr-3 flex items-center"
+                                onClick={() => setShowPassword(!showPassword)}
+                            >
+                                {showPassword ? (
+                                    <EyeOffIcon className="h-5 w-5 text-sentinel-text-secondary" />
+                                ) : (
+                                    <EyeIcon className="h-5 w-5 text-sentinel-text-secondary" />
+                                )}
+                            </button>
+                        </div>
                     </div>
                     
                     <div>
