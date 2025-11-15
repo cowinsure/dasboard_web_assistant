@@ -5,8 +5,8 @@ import Toast from '../components/Toast';
 
 const Register: React.FC = () => {
     const [tenantName, setTenantName] = useState('Test Tenants');
-    const [email, setEmail] = useState('test123@example.com');
-    const [password, setPassword] = useState('password123');
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
     const [showPassword, setShowPassword] = useState(false);
     const [loading, setLoading] = useState(false);
     const [toast, setToast] = useState<{ message: string; type: 'success' | 'error'; visible: boolean }>({
