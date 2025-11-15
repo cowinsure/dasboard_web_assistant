@@ -4,8 +4,8 @@ import { LogoIcon, SpinnerIcon } from '../components/icons/Icons';
 import Toast from '../components/Toast';
 
 const Login: React.FC = () => {
-    const [email, setEmail] = useState('test12@example.com');
-    const [password, setPassword] = useState('password123');
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
     const [loading, setLoading] = useState(false);
     const [toast, setToast] = useState<{ message: string; type: 'success' | 'error'; visible: boolean }>({
         message: '',
