@@ -250,7 +250,7 @@ const DataOnboarding: React.FC = () => {
             if (!token) {
                 throw new Error('Access token not found');
             }
-            const response = await fetch(`https://api.nswebassistant.site/delete/${doc.id}`, {
+            const response = await fetch(`https://api.nswebassistant.site/documents/${doc.id}`, {
                 method: 'DELETE',
                 headers: {
                     'Authorization': `Bearer ${token}`
