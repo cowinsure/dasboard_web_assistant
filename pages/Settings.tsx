@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { CreditCardIcon, CalendarIcon, CopyIcon, EyeIcon, EyeOffIcon, RefreshIcon } from '../components/icons/Icons';
+import { CreditCardIcon, CalendarIcon, CopyIcon, EyeIcon, EyeOffIcon, RefreshIcon, SuccessRateIcon } from '../components/icons/Icons';
 
 const Settings: React.FC = () => {
   const [autoRenew, setAutoRenew] = useState(true);
   const [showToken, setShowToken] = useState(false);
   const [apiToken, setApiToken] = useState('');
+  const [copied, setCopied] = useState(false);
 
   const fetchApiKey = async () => {
     try {
@@ -26,6 +27,16 @@ const Settings: React.FC = () => {
     } catch (error) {
       console.error('Error fetching API key:', error);
       setApiToken('Error loading API key');
+    }
+  };
+
+  const handleCopy = async () => {
+    try {
+      await navigator.clipboard.writeText(apiToken);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch (error) {
+      console.error('Failed to copy:', error);
     }
   };
 
@@ -96,9 +107,9 @@ const Settings: React.FC = () => {
                 <button onClick={() => setShowToken(!showToken)} className="p-1.5 text-sentinel-text-secondary hover:text-sentinel-text-primary">
                   {showToken ? <EyeOffIcon className="w-4 h-4"/> : <EyeIcon className="w-4 h-4"/>}
                 </button>
-                 <button onClick={() => navigator.clipboard.writeText(apiToken)} className="p-1.5 text-sentinel-text-secondary hover:text-sentinel-text-primary">
-                  <CopyIcon className="w-4 h-4"/>
-                </button>
+                 <button onClick={handleCopy} className="p-1.5 text-sentinel-text-secondary hover:text-sentinel-text-primary">
+                   {copied ? <SuccessRateIcon className="w-4 h-4" /> : <CopyIcon className="w-4 h-4" />}
+                 </button>
               </div>
             </div>
             {/* <button className="mt-4 w-full flex items-center justify-center gap-2 text-sm bg-sentinel-border hover:bg-sentinel-border/80 text-sentinel-text-primary font-semibold py-2 px-4 rounded-lg transition-colors">
