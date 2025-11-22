@@ -241,6 +241,36 @@ const DataOnboarding: React.FC = () => {
         }
     };
 
+    const handleDelete = async (doc: Document) => {
+        if (!confirm(`Are you sure you want to delete "${doc.name}"?`)) {
+            return;
+        }
+        try {
+            const token = localStorage.getItem('accessToken');
+            if (!token) {
+                throw new Error('Access token not found');
+            }
+            const response = await fetch(`https://api.nswebassistant.site/delete/${doc.id}`, {
+                method: 'DELETE',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+            if (!response.ok) {
+                throw new Error('Delete failed');
+            }
+            setToastMessage('Document deleted successfully!');
+            setToastType('success');
+            setShowToast(true);
+            fetchDocuments(); // Refresh the documents list
+        } catch (error) {
+            console.error('Delete failed:', error);
+            setToastMessage('Delete failed. Please try again.');
+            setToastType('error');
+            setShowToast(true);
+        }
+    };
+
     useEffect(() => {
         fetchDocuments();
     }, []);
@@ -371,7 +401,7 @@ const DataOnboarding: React.FC = () => {
                                     <div className="flex justify-end gap-2">
                                         {/* <button className="p-2 text-sentinel-text-secondary hover:text-sentinel-primary"><EyeIcon className="w-5 h-5" /></button> */}
                                         <button onClick={() => handleDownload(doc)} disabled={downloadingId === doc.id} className="p-2 text-sentinel-text-secondary hover:text-sentinel-primary disabled:opacity-50"><DownloadIcon className="w-5 h-5" /></button>
-                                        <button className="p-2 text-sentinel-text-secondary hover:text-sentinel-red"><TrashIcon className="w-5 h-5" /></button>
+                                        <button onClick={() => handleDelete(doc)} className="p-2 text-sentinel-text-secondary hover:text-sentinel-red"><TrashIcon className="w-5 h-5" /></button>
                                     </div>
                                 </td>
                             </tr>

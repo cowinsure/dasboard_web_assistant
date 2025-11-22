@@ -1,10 +1,37 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { CreditCardIcon, CalendarIcon, CopyIcon, EyeIcon, EyeOffIcon, RefreshIcon } from '../components/icons/Icons';
 
 const Settings: React.FC = () => {
   const [autoRenew, setAutoRenew] = useState(true);
   const [showToken, setShowToken] = useState(false);
-  const apiToken = "sentinel_live_xxxxxxxxxxxxxxxxxxxxxxxxxxxx";
+  const [apiToken, setApiToken] = useState('');
+
+  const fetchApiKey = async () => {
+    try {
+      const token = localStorage.getItem('accessToken');
+      if (!token) {
+        throw new Error('Access token not found');
+      }
+      const response = await fetch('https://api.nswebassistant.site/auth/tenant/api-key', {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      if (!response.ok) {
+        throw new Error('Failed to fetch API key');
+      }
+      const data = await response.json();
+      setApiToken(data.apiKey);
+    } catch (error) {
+      console.error('Error fetching API key:', error);
+      setApiToken('Error loading API key');
+    }
+  };
+
+  useEffect(() => {
+    fetchApiKey();
+  }, []);
 
   return (
     <div className="p-8">
@@ -74,10 +101,10 @@ const Settings: React.FC = () => {
                 </button>
               </div>
             </div>
-            <button className="mt-4 w-full flex items-center justify-center gap-2 text-sm bg-sentinel-border hover:bg-sentinel-border/80 text-sentinel-text-primary font-semibold py-2 px-4 rounded-lg transition-colors">
+            {/* <button className="mt-4 w-full flex items-center justify-center gap-2 text-sm bg-sentinel-border hover:bg-sentinel-border/80 text-sentinel-text-primary font-semibold py-2 px-4 rounded-lg transition-colors">
               <RefreshIcon className="w-4 h-4" />
               Regenerate Token
-            </button>
+            </button> */}
           </div>
         </div>
       </div>
