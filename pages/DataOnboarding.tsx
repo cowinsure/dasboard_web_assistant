@@ -159,8 +159,8 @@ const DataOnboarding: React.FC = () => {
             setToastMessage('Files uploaded successfully!');
             setToastType('success');
             setShowToast(true);
-            handleNext();
             fetchDocuments(); // Refresh the documents list
+            handleNext();
         } catch (error) {
             console.error('Upload failed:', error);
             setIsProcessing(false);
